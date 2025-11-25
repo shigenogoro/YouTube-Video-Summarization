@@ -1,5 +1,2 @@
 # Ignore .gh_token
 .gh_token
-
-# Ignore data files
-data
