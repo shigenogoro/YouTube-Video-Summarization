@@ -3,9 +3,6 @@ from datasets import load_dataset
 def load_meetingbank():
     """
     Load the MeetingBank dataset from HuggingFace.
-    
-    The expected dataset ID is "huuuyeah/meetingbank".
-
     Returns:
         train_data (Dataset): The training split.
         val_data (Dataset): The validation split.
