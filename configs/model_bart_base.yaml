@@ -2,7 +2,7 @@ model:
   model_name: "facebook/bart-base"
 
 data:
-  name: "meetingbank"
+  name: "MeetingBank-HF/MeetingBank"
   path: "data/meetingbank"
   text_column: "dialogue"      # Change as per dataset column name
   summary_column: "summary"

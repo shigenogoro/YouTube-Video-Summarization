@@ -3,14 +3,11 @@ pandas
 tqdm
 matplotlib
 seaborn
-
 torch
 transformers
 sentence-transformers
-
 spacy
 nltk
-
 rouge-score
 bert-score
 datasets
