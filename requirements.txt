@@ -8,6 +8,7 @@ transformers
 sentence-transformers
 spacy
 nltk
+evaluate
 rouge-score
 bert-score
 datasets
