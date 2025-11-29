@@ -1,2 +1,5 @@
-# Ignore .gh_token
-.gh_token
+# Ignore Model Checkpoints
+models
+
+# Ignore Data Files
+data
