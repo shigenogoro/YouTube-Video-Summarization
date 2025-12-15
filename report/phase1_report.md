@@ -32,7 +32,9 @@ This Phase 1 report summarizes the MeetingBank experiments (divide-and-conquer s
 
 Values rounded to 2 decimal places; gains = (fine-tuned − pretrained).
 
-### Meeting-level ROUGE (concatenated segments)
+### Meeting-level Performance (concatenated segments)
+
+**ROUGE Scores**
 
 | Metric     | Fine-tuned (%) |
 |------------|----------------|
@@ -41,7 +43,19 @@ Values rounded to 2 decimal places; gains = (fine-tuned − pretrained).
 | ROUGE-L    | 59.83          |
 | ROUGE-Lsum | 59.79          |
 
-### Temporal alignment
+**BERTScore**
+
+| Metric | Score (%) |
+|--------|-----------|
+| Precision | 93.37 |
+| Recall | 89.67 |
+| F1 | 91.44 |
+
+### Temporal Alignment
+
+| Metric | Accuracy |
+|--------|----------|
+| Alignment Accuracy | 80.43% |
 
 - File: `data/meetingbank/alignment_results.csv` (inspected)
 - Alignment accuracy: **80.43%** (0.8043) — fraction of sentence-level alignments where predicted segment matched the ground-truth segment.
