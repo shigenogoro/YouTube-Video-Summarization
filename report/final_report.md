@@ -36,9 +36,9 @@ Scope and constraints:
 Below is a concise checklist of proposed tasks and the actual outcome.
 
 - Proposed: Build a modular pipeline to produce timestamp-aligned chapter titles from ASR. — Completed: Pipeline implemented in notebooks (`notebooks/phase2_VidChapter-7M/02_VidChapter_Pipeline.ipynb`) and segmentation code (`03_VidChapter_Segment_version11.ipynb`). Models saved under `models/`.
-- Proposed: Compare segmentation strategies (fixed-duration vs. semantic). — Completed: Implemented and evaluated Fixed-Window and Semantic-Segmentation pipelines. Results reported in this repo and in Phase 2 report.
+- Proposed: Compare segmentation strategies (fixed-duration vs. semantic). — Completed: Implemented and evaluated Fixed-Window, Semantic-Segmentation (Adaptive K), and Semantic-Segmentation (Threshold) pipelines. Results reported in this repo and in Phase 2 report.
 - Proposed: Predict adaptive segment count (K) for semantic segmentation. — Partially completed: Implemented a `GradientBoostingRegressor` for K prediction. Performance (MAE ≈ 4.58, exact-match ≈ 10.3%) limited general usefulness.
-- Proposed: Develop a semantic-threshold segmentation method. — Not completed: Deferred because computing pairwise similarities and tuning thresholds across many videos was computationally expensive within the project time budget.
+- Proposed: Develop a semantic-threshold segmentation method. — Completed: Implemented a threshold-based segmentation strategy using cosine similarity of Sentence-BERT embeddings.
 - Proposed: Evaluate long-sequence transformer models (LongT5/LED). — Not completed: Omitted due to compute/time constraints; focused on BART as a practical summarization baseline.
 - Proposed: Fine-tune a summarization model to generate chapter titles. — Completed: Fine-tuned BART (base) and evaluated its ROUGE and BERTScore results; best model saved as `models/vidchapter_bart_best`.
 - Proposed: Implement temporal alignment of titles to timeline. — Completed: Implemented a BERT-based alignment classifier, evaluated with Temporal F1; model saved as `models/vidchapter_alignment`.
@@ -58,6 +58,7 @@ Preprocessing steps (applied to both datasets where appropriate): normalize punc
 
 - Fixed-Window (K=6): split each transcript into 6 equal-duration windows; generate one title per window with fine-tuned BART.
 - Semantic-Segmentation (Adaptive K): predict K per video using `GradientBoostingRegressor` then place K−1 split boundaries by selecting low-similarity points from Sentence-BERT embeddings.
+- Semantic-Segmentation (Threshold): split transcript whenever cosine similarity between consecutive Sentence-BERT embeddings falls below a fixed threshold (0.4).
 
 Hyperparameters and training details are described in the notebooks; high-level choices: BART-base fine-tuned for title generation with standard seq2seq cross-entropy and validation-based early stopping; BERT-based classifier fine-tuned on positive (ground-truth title+segment) and negative (random pair) examples.
 
@@ -80,17 +81,19 @@ Compute: experiments were run on available university GPUs and local machines; e
 ## Results (high-level summary)
 
 Summarization (VidChapter-7M subset):
-
-- Fixed-Window (K=6): ROUGE-1 = 15.46%, ROUGE-2 = 7.15%, ROUGE-L = 15.19%, BERTScore F1 = 85.16%
-- Semantic-Seg (Adaptive K): ROUGE-1 = 14.16%, ROUGE-2 = 4.81%, ROUGE-L = 13.76%, BERTScore F1 = 84.94%
+4.80%, ROUGE-2 = 6.56%, ROUGE-L = 14.31%, BERTScore F1 = 85.38%
+- Semantic-Seg (Adaptive K): ROUGE-1 = 12.81%, ROUGE-2 = 5.10%, ROUGE-L = 12.51%, BERTScore F1 = 85.16%
+- Semantic-Seg (Threshold=0.4): ROUGE-1 = 3.57%, ROUGE-2 = 0.91%, ROUGE-L = 3.50%, BERTScore F1 = 83.16%
 
 Alignment (Temporal F1):
 
-- Fixed-Window (K=6): F1 (±15s) = 68.75%, F1 (±30s) = 69.10%
-- Semantic-Seg (Adaptive K): F1 (±15s) = 66.54%, F1 (±30s) = 68.01%
+- Fixed-Window (K=6): F1 (±15s) = 65.35%, F1 (±30s) = 65.52%
+- Semantic-Seg (Adaptive K): F1 (±15s) = 62.74%, F1 (±30s) = 64.66%
+- Semantic-Seg (Threshold=0.4): F1 (±15s) = 39.51%, F1 (±30s) = 41.78%
 
 K-prediction (Adaptive K): GradientBoostingRegressor achieved MAE ≈ 4.58 chapters; exact-match accuracy ≈ 10.29%.
 
+Summary: Across the VidChapter-7M subset, Fixed-Window segmentation outperformed both semantic strategies (Adaptive and Threshold) on summarization and alignment metrics. The Threshold-based method performed significantly worse, suggesting that simple duration-based splitting is a more robust
 Summary: Across the VidChapter-7M subset, Fixed-Window segmentation slightly outperformed the semantic adaptive strategy on both summarization and alignment metrics, suggesting that simple duration-based splitting is a robust and scalable baseline on this dataset.
 
 ## Error analysis
@@ -111,7 +114,7 @@ We recommend a focused manual annotation of ~100 failed examples to categorize e
 
 ## Conclusion and future work
 
-This project implemented a modular, transcript-only pipeline for generating timestamp-aligned chapter titles and aligning them to video timelines across two datasets. The main empirical takeaway is that a simple Fixed-Window baseline is surprisingly competitive on the VidChapter-7M subset. Future directions:
+This rove semantic-threshold segmentation by dynamically selecting thresholds per video or using more sophisticated boundary detection algorithms (e.g., C99, TextTiling), as the fixed threshold approach underperformedway is that a simple Fixed-Window baseline is surprisingly competitive on the VidChapter-7M subset. Future directions:
 
 - Implement and evaluate semantic-threshold segmentation to allow variable-length segments without heavy pairwise costs (investigate approximation techniques or streaming similarity measures).
 - Incorporate lightweight visual cues (key frames, slide-change detectors) to improve boundary detection.
