@@ -3,3 +3,6 @@ models
 
 # Ignore Data Files
 data/meetingbank/results
+
+# Ignore outputs
+notebooks/phase2_VidChapter-7M/outputs
