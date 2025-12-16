@@ -1,4 +1,4 @@
-# Cross-Dataset Video Chapter Generation and Temporal Alignment — MeetingBank & VidChapter-7M
+# BART- and BERT-Based Chaptering Pipeline: Evaluating Fixed-Window and Semantic Segmentation for Temporal Alignment on Meeting and YouTube Transcripts
 
 Authors: Sheng-Kai Wen, Mohammad Derakshi
 
